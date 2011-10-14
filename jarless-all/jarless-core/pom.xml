@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>jarless-all</artifactId>
+		<groupId>br.com.bc</groupId>
+		<version>0.0.1</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>jarless-core</artifactId>
+	<packaging>war</packaging>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>2.2.1.GA</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<version>2.2.1.GA</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>prevayler</groupId>
+			<artifactId>prevayler</artifactId>
+			<version>2.02.005</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>br.com.bc</groupId>
+			<artifactId>jarless-common</artifactId>
+			<version>0.0.1</version>
+		</dependency>		
+		
+	</dependencies>
+
+	<build>
+		<finalName>jarless-core</finalName>
+		
+		<plugins>
+			<!-- 
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			 -->
+			
+			<plugin>
+				<groupId>br.com.bc.maven</groupId>
+				<artifactId>bcdeploy-maven-plugin</artifactId> 
+				<version>1.0.0</version>
+				<configuration>
+					<fileName>target/jarless-core.war</fileName>
+					<copyTo>${JBOSS_HOME}/server/rest/deploy/</copyTo>
+					<extractFile>true</extractFile>					
+				</configuration>				
+			</plugin>			
+			 
+		</plugins>
+	</build>
+	
+	
+</project>
