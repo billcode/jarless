@@ -56,23 +56,13 @@
 		<finalName>jarless-core</finalName>
 		
 		<plugins>
-			<!-- 
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			 -->
-			
 			<plugin>
 				<groupId>br.com.bc.maven</groupId>
 				<artifactId>bcdeploy-maven-plugin</artifactId> 
 				<version>1.0.0</version>
 				<configuration>
 					<fileName>target/jarless-core.war</fileName>
-					<copyTo>${JBOSS_HOME}/server/rest/deploy/</copyTo>
+					<copyTo>${JBOSS_HOME}/standalone/deployments/</copyTo>
 					<extractFile>true</extractFile>					
 				</configuration>				
 			</plugin>			
