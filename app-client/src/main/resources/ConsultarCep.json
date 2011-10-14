@@ -1,0 +1,10 @@
+{
+	"name":"ConsultarCep"
+	"request":"",
+	"response":"",
+	"classes": [ {
+		"name":"br.com.bc.service.ConsultarCep",
+		"source":"",
+		"data":[]
+	}],
+}
