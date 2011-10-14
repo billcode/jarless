@@ -14,6 +14,7 @@
 	<modules>
 		<module>jarless-common</module>
 		<module>jarless-core</module>
+		<module>jarless-web-admin</module>
   	</modules>
 	
 	<build>

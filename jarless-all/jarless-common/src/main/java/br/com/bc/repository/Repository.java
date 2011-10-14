@@ -1,5 +1,7 @@
 package br.com.bc.repository;
 
+import java.util.List;
+
 import br.com.bc.rest.model.ClassDefinition;
 import br.com.bc.rest.model.ServiceDefinition;
 
@@ -12,5 +14,7 @@ public interface Repository {
 	ServiceDefinition getServiceDefinition(String name) throws Exception;
 
 	ClassDefinition getClassDefinition(String name) throws Exception;
+	
+	List<ServiceDefinition> getServices() throws Exception;
 	
 }

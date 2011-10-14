@@ -266,4 +266,16 @@ public class ServiceEngine {
 		return contents.toString();
 	}	
 
+	
+	public List<ServiceDefinition> getServices() {
+		List<ServiceDefinition> result = null;
+		
+		try {
+			result = repository.getServices();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 }

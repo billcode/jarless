@@ -1,6 +1,7 @@
 package br.com.bc.repository;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.prevayler.Prevayler;
@@ -162,6 +163,23 @@ public class RepositoryImpl implements Repository {
 		factory.configurePrevalentSystem(new ListaServiceDefinition());
 		factory.configurePrevalenceBase("/usr/apprest");
 		return factory;
+	}
+
+
+
+	@Override
+	public List<ServiceDefinition> getServices() throws Exception {
+		List<ServiceDefinition> result = new ArrayList<ServiceDefinition>();
+		
+		ListaServiceDefinition lista = ((ListaServiceDefinition) prevayler.prevalentSystem());
+		
+		for (int i=0; i < lista.size(); i++) {
+			ServiceDefinition pd = lista.get(i);
+			result.add(pd);
+		}
+		
+		return result;
+
 	}
 
 
