@@ -1,5 +1,8 @@
 package br.com.bc.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -9,11 +12,11 @@ import javax.ws.rs.core.Response;
 import br.com.bc.rest.model.ServiceDefinition;
 
 
-@Path("/execute")
+@Path("/service")
 public class ServiceController {
 
 	@GET
-	@Path("/service/{param}/{request}")
+	@Path("/execute/{param}/{request}")
 	public Response printMessage(@PathParam("param") String serviceName,
 								 @PathParam("request") String serviceRequest) {
 
@@ -34,28 +37,35 @@ public class ServiceController {
 	
 
 
-	@GET
-	@Path("/get")
-	@Produces("application/json")
-	public ServiceDefinition getProductInJSON() {
+//	@GET
+//	@Path("/list")
+//	@Produces("application/json")
+//	public ServiceDefinition getProductInJSON() {
 //
 //		Product product = new Product();
 //		product.setName("iPad 3");
 //		product.setQty(999);
 //		
-		return null; 
-	}
-//
-//	@POST
-//	@Path("/post")
-//	@Consumes("application/json")
-//	public Response createProductInJSON(Product product) {
-//
-//		String result = "Product created : " + product;
-//		return Response.status(201).entity(result).build();
-//		
+//		return null; 
 //	}
-//		
+
+	
+	
+	@GET
+	@Path("/list")
+	@Produces("text/plain")
+	public Response listAllServices() {
+		//@Produces("application/json")
+		
+		List<ServiceDefinition> services = ServiceEngine.getInstance().getServices();
+		
+		List<String> result = new ArrayList<String>();
+		for (ServiceDefinition service : services) {
+			result.add(service.getName());
+		}
+		
+		return Response.status(200).entity(result).build();
+	}
 	
 
 	

@@ -58,10 +58,11 @@
 		<plugins>
 			<plugin>
 				<groupId>br.com.bc.maven</groupId>
-				<artifactId>bcdeploy-maven-plugin</artifactId> 
-				<version>1.0.0</version>
+				<artifactId>bcdeployer-maven-plugin</artifactId> 
+				<version>0.0.1</version>
 				<configuration>
 					<fileName>target/jarless-core.war</fileName>
+					<server>jboss7</server>
 					<copyTo>${JBOSS_HOME}/standalone/deployments/</copyTo>
 					<extractFile>true</extractFile>					
 				</configuration>				
