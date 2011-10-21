@@ -1,11 +1,14 @@
 package br.com.bc.rest;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -72,14 +75,40 @@ public class ServiceController {
 	
 	
 	//@POST
+	//@PUT
+	//@Path("/publish")
+	//@Consumes("text/html")
+	//public String publish(String content) {
+	//	String result = "--->" + content + "<---";
+	//	System.out.println(result);
+	//	return result;
+	//}
+	
 	@PUT
 	@Path("/publish")
-	@Consumes("text/html")
-	public String publish(String content) {
-		String result = "--->" + content + "<---";
-		System.out.println(result);
-		return result;
+	@Consumes("application/text")
+	public void publish(InputStream is) {
+		try {
+			
+			String content = readContent(is);
+			ServiceEngine.getInstance().deployServiceJson(content);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
+	
+	protected String readContent(InputStream is) throws IOException {
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	    StringBuilder sb = new StringBuilder();
+	    String line = null;
+	    while ((line = reader.readLine()) != null) {
+	      sb.append(line);
+	    }
+	    is.close();
+	    return sb.toString();		
+	}
+
 	
 }

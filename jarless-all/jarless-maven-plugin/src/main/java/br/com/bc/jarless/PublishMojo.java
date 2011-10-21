@@ -1,11 +1,14 @@
 package br.com.bc.jarless;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import br.com.bc.json.JsonConverter;
-import br.com.bc.rest.ServiceEngine;
-import br.com.bc.rest.model.ServiceDefinition;
 
 /**
  * @goal publish
@@ -21,6 +24,10 @@ public class PublishMojo extends AbstractMojo {
 	private String file;
 	
 	private String service;
+	
+	private String server = "http://localhost:8080";
+	
+	private static final int ERROR_READ_BUFFER_SIZE = 1024;
 
     public void execute() throws MojoExecutionException {
     	
@@ -41,29 +48,41 @@ public class PublishMojo extends AbstractMojo {
 			jsonConverter.setBinExtension(".class");
 			
 			String content = jsonConverter.geraJson(file, "", "", file);
-			display("-=-=-=-==-=-=-=-=-=--==--=-=-=-=");
-			display(content);
-			display("-=-=-=-==-=-=-=-=-=--==--=-=-=-=");
+			display("  json ok");
 			
-			ServiceEngine.getInstance().deployServiceJson(content);
-			ServiceDefinition newPd = null; //ServiceEngine.getInstance().getService(service);
+			//connecting to server
+			String uri = server + "/jarless-core/service/publish";
+			URL url;
 			
+			display("  connecting to server: " + server);
+			url = new URL(uri);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("PUT");  
+			conn.setRequestProperty("Content-Type", "application/text");  
+			conn.setDoOutput(true);  
+			conn.getOutputStream().write(content.getBytes());
 			
-			if (newPd != null) {
-				display("  Publishing OK");
-				display("  -------------");
-				display("  name    : " + newPd.getName());
-				display("  request : " + newPd.getRequest());
-				display("  response: " + newPd.getResponse());
-				display("  classes : " + newPd.getClasses());
-			}
+			int responseCode = conn.getResponseCode();  
+			if (HttpURLConnection.HTTP_OK != responseCode
+					&& HttpURLConnection.HTTP_NO_CONTENT != responseCode) {  
+				ByteArrayOutputStream errorBuffer = new ByteArrayOutputStream();  
+				
+				int read;  
+				byte[] readBuffer = new byte[ERROR_READ_BUFFER_SIZE];  
+				InputStream errorStream = conn.getErrorStream();  
+				while (-1 != (read = errorStream.read(readBuffer))) {  
+					errorBuffer.write(readBuffer, 0, read);  
+				}  
+				
+				display("Request failed, HTTP " + responseCode + ": " + conn.getResponseMessage());  
+			}  
+			
+			display("  publishing ok");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MojoExecutionException("Error publishing: " + e.getMessage());
 		}
-
-		
 
     }
     
