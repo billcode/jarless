@@ -3,6 +3,7 @@ package br.com.bc.jarless;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import br.com.bc.json.JsonConverter;
 import br.com.bc.rest.ServiceEngine;
 import br.com.bc.rest.model.ServiceDefinition;
 
@@ -29,16 +30,23 @@ public class PublishMojo extends AbstractMojo {
     		service = file.substring(separator + 1);
     	}
     	
-    	file += ".json";
-    	
 		display(">>>>>>>>>>>>> JARLESS - PUBLISH");
 		display("  file    : " + file);
 		display("  service : " + service);
 		
 		try {
 			
-			ServiceEngine.getInstance().deployServiceJson(file);
-			ServiceDefinition newPd = ServiceEngine.getInstance().getService(service);
+			JsonConverter jsonConverter = new JsonConverter();
+			jsonConverter.setBinFolder("target/classes/");
+			jsonConverter.setBinExtension(".class");
+			
+			String content = jsonConverter.geraJson(file, "", "", file);
+			display("-=-=-=-==-=-=-=-=-=--==--=-=-=-=");
+			display(content);
+			display("-=-=-=-==-=-=-=-=-=--==--=-=-=-=");
+			
+			ServiceEngine.getInstance().deployServiceJson(content);
+			ServiceDefinition newPd = null; //ServiceEngine.getInstance().getService(service);
 			
 			
 			if (newPd != null) {
@@ -60,6 +68,7 @@ public class PublishMojo extends AbstractMojo {
     }
     
     
+    
 	private void display(String message) {
 		getLog().info(message);
 	}
@@ -71,4 +80,5 @@ public class PublishMojo extends AbstractMojo {
 	public void setFile(String file) {
 		this.file = file;
 	}		
+
 }

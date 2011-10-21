@@ -1,12 +1,5 @@
 package br.com.bc.rest;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,11 +47,8 @@ public class ServiceEngine {
 	
 	
 	
-	public void deployServiceJson(String serviceName) throws Exception {
-		File file = new File(serviceName);
-		String serviceJson = ServiceEngine.getInstance().getContents(file);
-	
-		ServiceDefinition pd = getServiceDefinitionFrom(serviceJson);
+	public void deployServiceJson(String content) throws Exception {
+		ServiceDefinition pd = getServiceDefinitionFrom(content);
 		deployService(pd);
 	}
 	
@@ -173,7 +163,7 @@ public class ServiceEngine {
 
 			}
 
-			loadServiceClasses(pd);
+			//loadServiceClasses(pd);
 
 		} catch (ParseException pe) {
 			System.out.println(pe);
@@ -189,82 +179,33 @@ public class ServiceEngine {
 
 		while (iter.hasNext()) {
 			// Map.Entry entry = (Map.Entry) iter.next();
-			LinkedHashMap<String, String> entry = (LinkedHashMap) iter.next();
+			LinkedHashMap<String, Object> entry = (LinkedHashMap) iter.next();
 
 			ClassDefinition classDef = new ClassDefinition();
+			classDef.setName(entry.get("name").toString());
+			
+			LinkedList<Byte> datalist = (LinkedList<Byte>) entry.get("data");
+			
+			byte[] newdata = new byte[datalist.size()];
+			int index = 0;
+			
+			for(int i=0; i < datalist.size(); i++) {
+				String newvalue = String.valueOf(datalist.get(i)); 
+				newdata[i] = Byte.parseByte(newvalue);
+			}
+			
+			
+			classDef.setData(newdata);
 
-			classDef.setName(entry.get("name"));
-			// if (entry.getKey().equals("name")) {
-
-			// }
 			classes.add(classDef);
 
 		}
 
 		return classes;
 	}	
-	private void loadServiceClasses(ServiceDefinition pd) {
 
-		for (ClassDefinition cd : pd.getClasses()) {
-			loadClass(cd);
-		}
-	}
 
-	private void loadClass(ClassDefinition classdef) {
-		String path = "target/classes/";
 
-		String fileName = classdef.getName().replaceAll("\\.", "/");
-
-		File file = new File(path + fileName + ".class");
-		FileInputStream fis = null;
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		byte[] classData = null;
-
-		try {
-
-			fis = new FileInputStream(file);
-
-			int b;
-			while ((b = fis.read()) != -1) {
-				out.write(b);
-			}
-
-			fis.close();
-			out.close();
-
-			classData = out.toByteArray();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		classdef.setData(classData);
-	}
-
-	public String getContents(File aFile) {
-		StringBuilder contents = new StringBuilder();
-
-		try {
-			BufferedReader input = new BufferedReader(new FileReader(aFile));
-			try {
-				String line = null; // not declared within while loop
-				while ((line = input.readLine()) != null) {
-					contents.append(line);
-					contents.append(System.getProperty("line.separator"));
-				}
-			} finally {
-				input.close();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-
-		return contents.toString();
-	}	
 
 	
 	public List<ServiceDefinition> getServices() {
