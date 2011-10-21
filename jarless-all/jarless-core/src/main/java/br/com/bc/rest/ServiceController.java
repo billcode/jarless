@@ -23,7 +23,7 @@ public class ServiceController {
 
 	@GET
 	@Path("/execute/{param}/{request}")
-	public Response printMessage(@PathParam("param") String serviceName,
+	public Response execute(@PathParam("param") String serviceName,
 								 @PathParam("request") String serviceRequest) {
 
 		String result = "";
@@ -42,27 +42,10 @@ public class ServiceController {
 	
 	
 
-
-//	@GET
-//	@Path("/list")
-//	@Produces("application/json")
-//	public ServiceDefinition getProductInJSON() {
-//
-//		Product product = new Product();
-//		product.setName("iPad 3");
-//		product.setQty(999);
-//		
-//		return null; 
-//	}
-
-	
-	
 	@GET
 	@Path("/list")
 	@Produces("text/plain")
 	public Response listAllServices() {
-		//@Produces("application/json")
-		
 		List<ServiceDefinition> services = ServiceEngine.getInstance().getServices();
 		
 		List<String> result = new ArrayList<String>();
@@ -73,16 +56,6 @@ public class ServiceController {
 		return Response.status(200).entity(result).build();
 	}
 	
-	
-	//@POST
-	//@PUT
-	//@Path("/publish")
-	//@Consumes("text/html")
-	//public String publish(String content) {
-	//	String result = "--->" + content + "<---";
-	//	System.out.println(result);
-	//	return result;
-	//}
 	
 	@PUT
 	@Path("/publish")
