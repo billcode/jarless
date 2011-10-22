@@ -54,7 +54,7 @@ public class RepositoryImpl implements Repository {
 	@Override
 	public void addService(ServiceDefinition serviceDefinition) {
 		prevayler.execute(new AdicionarServiceDefinition(serviceDefinition.getName(), serviceDefinition.getRequest(), 
-				serviceDefinition.getResponse(), serviceDefinition.getClasses()));
+				serviceDefinition.getResponse(), serviceDefinition.getMainClass()));
 
 		ListaServiceDefinition lista = ((ListaServiceDefinition) prevayler.prevalentSystem());
 		System.out.println(lista.size());		
@@ -92,20 +92,15 @@ public class RepositoryImpl implements Repository {
 		for (int i=0; i < lista.size(); i++) {
 			ServiceDefinition pd = lista.get(i);
 			
-			List<ClassDefinition> lClazzes = pd.getClasses();
+			ClassDefinition mainClass = pd.getMainClass();
 			
-			for (ClassDefinition cd : lClazzes) {
-				//TODO: esta condicao devera ser corrigida
-				//if (name.contains(cd.getName())) {
-				if (name.equals(cd.getName())) {
-					result = cd;
-					break;
-				}
-			}
-			
-			if (result != null) {
+			//TODO: esta condicao devera ser corrigida
+			//if (name.contains(cd.getName())) {
+			if (name.equals(mainClass.getName())) {
+				result = mainClass;
 				break;
 			}
+			
 		}		
 		
 		return result;

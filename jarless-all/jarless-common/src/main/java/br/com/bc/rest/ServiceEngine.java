@@ -1,7 +1,6 @@
 package br.com.bc.rest;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -62,7 +61,7 @@ public class ServiceEngine {
 		System.out.println("executando servico " + name);
 		
 		ServiceDefinition pd = getService(name);
-		String actionName = pd.getClasses().get(0).getName();;
+		String actionName = pd.getMainClass().getName();
 
 		ServiceContext ctx = new ServiceContext(repository);
 
@@ -154,16 +153,32 @@ public class ServiceEngine {
 					pd.setRequest(entry.getValue().toString());
 				} else if (entry.getKey().equals("response")) {
 					pd.setResponse(entry.getValue().toString());					
-				} else if (entry.getKey().equals("classes")) {
-					LinkedList list = (LinkedList) entry.getValue();
+				} else if (entry.getKey().equals("main_class")) {
+					
+					//LinkedList list = (LinkedList) entry.getValue();
+					//List<ClassDefinition> classes = getClassesDefinitionFrom(list);
+					
+					LinkedHashMap<String, Object> entryChild = (LinkedHashMap) entry.getValue();
 
-					List<ClassDefinition> classes = getClassesDefinitionFrom(list);
-					pd.setClasses(classes);
+					ClassDefinition mainClass = new ClassDefinition();
+					mainClass.setName(entryChild.get("name").toString());
+					
+					LinkedList<Byte> datalist = (LinkedList<Byte>) entryChild.get("data");
+					
+					byte[] newdata = new byte[datalist.size()];
+					int index = 0;
+					
+					for(int i=0; i < datalist.size(); i++) {
+						String newvalue = String.valueOf(datalist.get(i)); 
+						newdata[i] = Byte.parseByte(newvalue);
+					}
+					mainClass.setData(newdata);
+					
+					pd.setMainClass(mainClass);
+
 				}
 
 			}
-
-			//loadServiceClasses(pd);
 
 		} catch (ParseException pe) {
 			System.out.println(pe);
@@ -171,41 +186,6 @@ public class ServiceEngine {
 		
 		return pd;
 	}
-
-	private List<ClassDefinition> getClassesDefinitionFrom(LinkedList list) {
-
-		Iterator iter = list.iterator();
-		List<ClassDefinition> classes = new ArrayList<ClassDefinition>();
-
-		while (iter.hasNext()) {
-			// Map.Entry entry = (Map.Entry) iter.next();
-			LinkedHashMap<String, Object> entry = (LinkedHashMap) iter.next();
-
-			ClassDefinition classDef = new ClassDefinition();
-			classDef.setName(entry.get("name").toString());
-			
-			LinkedList<Byte> datalist = (LinkedList<Byte>) entry.get("data");
-			
-			byte[] newdata = new byte[datalist.size()];
-			int index = 0;
-			
-			for(int i=0; i < datalist.size(); i++) {
-				String newvalue = String.valueOf(datalist.get(i)); 
-				newdata[i] = Byte.parseByte(newvalue);
-			}
-			
-			
-			classDef.setData(newdata);
-
-			classes.add(classDef);
-
-		}
-
-		return classes;
-	}	
-
-
-
 
 	
 	public List<ServiceDefinition> getServices() {

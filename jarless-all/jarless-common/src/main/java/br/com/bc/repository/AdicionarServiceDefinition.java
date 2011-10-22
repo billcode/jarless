@@ -18,17 +18,17 @@ public class AdicionarServiceDefinition implements Transaction {
 
 	private String response;
 
-	private List<ClassDefinition> classes;
+	private ClassDefinition mainClass;
 
-	public AdicionarServiceDefinition(String name, String request, String response, List<ClassDefinition> classes) {
+	public AdicionarServiceDefinition(String name, String request, String response, ClassDefinition mainClass) {
 		super();
 		this.name = name;
 		this.request = request;
 		this.response = response;
-		this.classes = classes;
+		this.mainClass = mainClass;
 	}
 
 	public void executeOn(Object system, Date arg1) {
-		((ListaServiceDefinition) system).add(new ServiceDefinition(name, request, response, classes));
+		((ListaServiceDefinition) system).add(new ServiceDefinition(name, request, response, mainClass));
 	}
 }

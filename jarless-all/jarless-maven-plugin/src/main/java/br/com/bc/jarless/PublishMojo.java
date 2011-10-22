@@ -47,7 +47,7 @@ public class PublishMojo extends AbstractMojo {
 			jsonConverter.setBinFolder("target/classes/");
 			jsonConverter.setBinExtension(".class");
 			
-			String content = jsonConverter.geraJson(file, "", "", file);
+			String content = jsonConverter.geraJson(file, "", "");
 			display("  json ok");
 			
 			//connecting to server

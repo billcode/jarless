@@ -22,7 +22,9 @@ public class ServiceClassLoader extends ClassLoader {
 		} catch (Exception pdcEx) {
 			throw new ClassNotFoundException("Class '" + name + "' not found'!", pdcEx);
 		}
-
+		
+		name = name.replace(".java", "");
+		
 		return defineClass(name, data, 0, data.length);
 	}
 }

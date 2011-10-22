@@ -11,15 +11,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import br.com.bc.rest.model.ClassDefinition;
-
 public class JsonConverter {
 	
 	private String binfolder = null;
 	
 	private String binExtension = null;
 
-	public String geraJson(String servicename, String request, String response, String classname) {
+	public String geraJson(String classname, String request, String response) {
 		String json = null;
 		
 		try {
@@ -36,12 +34,9 @@ public class JsonConverter {
 			cd.put("name", classname);
 			cd.put("source", "");
 			
-			JSONArray list = new JSONArray();
-			list.add(cd);
-			
 			JSONObject pd = new JSONObject();
-			pd.put("classes", list);
-			pd.put("name", servicename);
+			pd.put("name", classname.replace(".java", ""));
+			pd.put("main_class", cd);
 			pd.put("request", request);
 			pd.put("response", response);
 			
@@ -59,7 +54,7 @@ public class JsonConverter {
 	
 	private byte[] loadClass(String classname) {
 
-		String fileName = classname.replaceAll("\\.", "/");
+		String fileName = classname.replace(".java", "").replaceAll("\\.", "/");
 
 		File file = new File(binfolder + fileName + binExtension);
 		FileInputStream fis = null;

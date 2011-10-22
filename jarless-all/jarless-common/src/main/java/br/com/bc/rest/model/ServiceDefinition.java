@@ -13,16 +13,16 @@ public class ServiceDefinition implements Serializable {
 
 	private String response;
 
-	private List<ClassDefinition> classes;
+	private ClassDefinition mainClass;
 
 	public ServiceDefinition() {
 	}
 	
-	public ServiceDefinition(String name, String request, String response, List<ClassDefinition> classes) {
+	public ServiceDefinition(String name, String request, String response, ClassDefinition mainClass) {
 		this.name = name;
 		this.request = request;
 		this.response = response;
-		this.classes = classes;
+		this.mainClass = mainClass;
 	}
 
 	public String getName() {
@@ -49,13 +49,12 @@ public class ServiceDefinition implements Serializable {
 		response = newResponse;
 	}
 
-	public List<ClassDefinition> getClasses() {
-		return classes;
+	public ClassDefinition getMainClass() {
+		return mainClass;
 	}
 
-	public void setClasses(List<ClassDefinition> classes) {
-		this.classes = classes;
+	public void setMainClass(ClassDefinition mainClass) {
+		this.mainClass = mainClass;
 	}
-	
 	
 }
