@@ -63,7 +63,7 @@ public class ServiceController {
 	@Consumes("application/text")
 	public void publish(InputStream is) {
 		String content = readContent(is);
-		ServiceEngine.getInstance().deployServiceJson(content);
+		ServiceEngine.getInstance().publishServiceJson(content);
 	}
 	
 	

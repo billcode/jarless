@@ -31,7 +31,7 @@ public class ServiceEngine {
 
 	public static ServiceEngine getInstance() { return INSTANCE; }
 	
-	public void deployService(ServiceDefinition service) {
+	public void publishService(ServiceDefinition service) {
 		repository.addService(service);
 	}
 
@@ -48,9 +48,10 @@ public class ServiceEngine {
 	
 	
 	
-	public void deployServiceJson(String content) {
+	public boolean publishServiceJson(String content) {
 		ServiceDefinition pd = getServiceDefinitionFrom(content);
-		deployService(pd);
+		publishService(pd);
+		return true;
 	}
 	
 	
