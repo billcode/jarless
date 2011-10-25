@@ -16,17 +16,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import br.com.bc.jarless.exception.JarlessException;
+import br.com.bc.repository.RepositoryImpl;
 import br.com.bc.rest.model.ServiceDefinition;
 
 
 @Path("/service")
 public class ServiceController {
 
+	public ServiceController() {
+		init();		
+	}
+	
 	@GET
 	@Path("/execute/{param}/{request}")
 	public Response execute(@PathParam("param") String serviceName,
 								 @PathParam("request") String serviceRequest) {
-
+		
 		String result = "";
 		
 		try {
@@ -42,6 +47,10 @@ public class ServiceController {
 	}
 	
 	
+
+
+
+
 
 	@GET
 	@Path("/list")
@@ -86,5 +95,9 @@ public class ServiceController {
 	    return result.toString();		
 	}
 
-	
+	private void init() {
+		if (ServiceEngine.getInstance().getRepository() == null) {
+			ServiceEngine.getInstance().setRepository(new RepositoryImpl());
+		}
+	}	
 }

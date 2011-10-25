@@ -37,20 +37,6 @@ public class RepositoryImpl implements Repository {
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see br.com.bc.repository.Repository#addClass(br.com.bc.rest.model.ClassDefinition)
-	 */
-	@Override
-	public void addClass(ClassDefinition classDefinition) {
-		//ListaClassDefinition lista = ((ListaClassDefinition) prevayler.prevalentSystem());
-		prevayler.execute(new AdicionarClassDefinition(classDefinition.getName(), classDefinition.getSource(), classDefinition.getData()));
-		
-		//ListaClassDefinition lista = ((ListaClassDefinition) prevayler.prevalentSystem());
-		//System.out.println(lista.size());
-		
-	}
-	
-	
 	@Override
 	public void addService(ServiceDefinition serviceDefinition) {
 		prevayler.execute(new AdicionarServiceDefinition(serviceDefinition.getName(), serviceDefinition.getRequest(), 

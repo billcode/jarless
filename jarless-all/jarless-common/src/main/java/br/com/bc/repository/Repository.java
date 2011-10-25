@@ -7,8 +7,6 @@ import br.com.bc.rest.model.ServiceDefinition;
 
 public interface Repository {
 
-	void addClass(ClassDefinition classDefinition);
-
 	void addService(ServiceDefinition serviceDefinition);
 	
 	ServiceDefinition getServiceDefinition(String name);
