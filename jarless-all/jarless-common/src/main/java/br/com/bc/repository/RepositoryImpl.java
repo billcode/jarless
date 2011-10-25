@@ -64,7 +64,7 @@ public class RepositoryImpl implements Repository {
 	
 	
 	@Override
-	public ServiceDefinition getServiceDefinition(String name) throws Exception {
+	public ServiceDefinition getServiceDefinition(String name) {
 		ServiceDefinition result = null;
 		
 		ListaServiceDefinition lista = ((ListaServiceDefinition) prevayler.prevalentSystem());
@@ -83,7 +83,7 @@ public class RepositoryImpl implements Repository {
 
 
 	@Override
-	public ClassDefinition getClassDefinition(String name) throws Exception {
+	public ClassDefinition getClassDefinition(String name) {
 		
 		ClassDefinition result = null;
 		
@@ -163,7 +163,7 @@ public class RepositoryImpl implements Repository {
 
 
 	@Override
-	public List<ServiceDefinition> getServices() throws Exception {
+	public List<ServiceDefinition> getServices() {
 		List<ServiceDefinition> result = new ArrayList<ServiceDefinition>();
 		
 		ListaServiceDefinition lista = ((ListaServiceDefinition) prevayler.prevalentSystem());

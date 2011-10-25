@@ -15,6 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import br.com.bc.jarless.exception.JarlessException;
 import br.com.bc.rest.model.ServiceDefinition;
 
 
@@ -61,26 +62,28 @@ public class ServiceController {
 	@Path("/publish")
 	@Consumes("application/text")
 	public void publish(InputStream is) {
-		try {
-			
-			String content = readContent(is);
-			ServiceEngine.getInstance().deployServiceJson(content);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String content = readContent(is);
+		ServiceEngine.getInstance().deployServiceJson(content);
 	}
 	
 	
-	protected String readContent(InputStream is) throws IOException {
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-	    StringBuilder sb = new StringBuilder();
-	    String line = null;
-	    while ((line = reader.readLine()) != null) {
-	      sb.append(line);
-	    }
-	    is.close();
-	    return sb.toString();		
+	protected String readContent(InputStream is) {
+		
+		StringBuilder result = new StringBuilder();
+		
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				result.append(line);
+			}
+			is.close();
+			
+		} catch (IOException e) {
+			throw new JarlessException("Error reading class content", e);
+		}
+		
+	    return result.toString();		
 	}
 
 	

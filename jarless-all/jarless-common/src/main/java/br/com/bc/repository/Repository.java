@@ -11,10 +11,10 @@ public interface Repository {
 
 	void addService(ServiceDefinition serviceDefinition);
 	
-	ServiceDefinition getServiceDefinition(String name) throws Exception;
+	ServiceDefinition getServiceDefinition(String name);
 
-	ClassDefinition getClassDefinition(String name) throws Exception;
+	ClassDefinition getClassDefinition(String name);
 	
-	List<ServiceDefinition> getServices() throws Exception;
+	List<ServiceDefinition> getServices();
 	
 }

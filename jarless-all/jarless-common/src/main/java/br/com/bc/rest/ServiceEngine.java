@@ -1,5 +1,6 @@
 package br.com.bc.rest;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,6 +13,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import br.com.bc.jarless.exception.JarlessException;
 import br.com.bc.repository.Repository;
 import br.com.bc.repository.RepositoryImpl;
 import br.com.bc.rest.model.ClassDefinition;
@@ -29,15 +31,15 @@ public class ServiceEngine {
 
 	public static ServiceEngine getInstance() { return INSTANCE; }
 	
-	public void deployService(ServiceDefinition service) throws Exception {
+	public void deployService(ServiceDefinition service) {
 		repository.addService(service);
 	}
 
-	public ServiceDefinition getService(String name) throws Exception {
+	public ServiceDefinition getService(String name) {
 		ServiceDefinition service = repository.getServiceDefinition(name);
 		
 		if (service == null) {
-			throw new Exception("Servico nao existe");
+			throw new JarlessException("Service not found: " + name);
 		}
 		
 		return service;
@@ -46,7 +48,7 @@ public class ServiceEngine {
 	
 	
 	
-	public void deployServiceJson(String content) throws Exception {
+	public void deployServiceJson(String content) {
 		ServiceDefinition pd = getServiceDefinitionFrom(content);
 		deployService(pd);
 	}
@@ -54,7 +56,7 @@ public class ServiceEngine {
 	
 	
 	
-	public String executeService(String name, String request) throws Exception {
+	public String executeService(String name, String request) {
 		String result = null;
 		Action action = null;
 		
@@ -71,19 +73,19 @@ public class ServiceEngine {
 			obj = ctx.getClassLoader().loadClass(actionName).newInstance();
 
 		} catch (InstantiationException iEx) {
-			throw new Exception(actionName, iEx);
+			throw new JarlessException("Class Error 1: " + actionName, iEx);
 
 		} catch (IllegalAccessException iaEx) {
-			throw new Exception(actionName, iaEx);
+			throw new JarlessException("Class Error 2: " + actionName, iaEx);
 
 		} catch (ClassNotFoundException cnfEx) {
-			throw new Exception(actionName, cnfEx);
+			throw new JarlessException("Class Error 3: " + actionName, cnfEx);
 
 		} catch (NoClassDefFoundError ncdfErr) {
-			throw new Exception(actionName, ncdfErr);
+			throw new JarlessException("Class Error 4: " + actionName, ncdfErr);
 			
 		} catch (Exception ncdfErr) {
-			throw new Exception(actionName, ncdfErr);
+			throw new JarlessException("Class Error 5: " + actionName, ncdfErr);
 		}
 
 		action = (Action) obj;
@@ -96,7 +98,11 @@ public class ServiceEngine {
 			//result = jsonArray.toString();
 			
 			StringWriter out = new StringWriter();
-			JSONValue.writeJSONString(response, out);
+			try {
+				JSONValue.writeJSONString(response, out);
+			} catch (IOException e) {
+				throw new JarlessException("Error generating response", e);
+			}
 			result = out.toString();
 			
 		} else {
