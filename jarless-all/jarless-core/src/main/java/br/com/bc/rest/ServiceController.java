@@ -16,7 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import br.com.bc.jarless.exception.JarlessException;
-import br.com.bc.repository.RepositoryImpl;
+import br.com.bc.jarless.repository.prevayler.RepositoryImpl;
 import br.com.bc.rest.model.ServiceDefinition;
 
 
@@ -97,7 +97,7 @@ public class ServiceController {
 
 	private void init() {
 		if (ServiceEngine.getInstance().getRepository() == null) {
-			ServiceEngine.getInstance().setRepository(new RepositoryImpl());
+			ServiceEngine.getInstance().setRepository(RepositoryImpl.getInstance());
 		}
 	}	
 }

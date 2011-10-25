@@ -14,7 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import br.com.bc.jarless.exception.JarlessException;
-import br.com.bc.repository.Repository;
+import br.com.bc.jarless.repository.Repository;
 import br.com.bc.rest.model.ClassDefinition;
 import br.com.bc.rest.model.ServiceDefinition;
 

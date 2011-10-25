@@ -1,6 +1,6 @@
 package br.com.bc.rest;
 
-import br.com.bc.repository.Repository;
+import br.com.bc.jarless.repository.Repository;
 import br.com.bc.rest.model.ClassDefinition;
 
 public class ServiceClassLoader extends ClassLoader {
