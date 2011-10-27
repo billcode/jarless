@@ -22,6 +22,7 @@ public class FilePublishTest {
 	
 	@Test public void publishJson() throws Exception {
 		
+		/** Servico 1 */
 		//dado o JSON do servico
 		String json = FileConvertTest.CONSULTAR_CEP_JSON;
 		
@@ -30,6 +31,12 @@ public class FilePublishTest {
 		
 		//entao a publicacao devera ser efetivada
 		assertEquals(Boolean.TRUE, result);
+		
+		/** Servico 2 */
+		json = FileConvertTest.LISTAR_CONTATOS_JSON;
+		result = ServiceEngine.getInstance().publishServiceJson(json);
+		assertEquals(Boolean.TRUE, result);
+		
 	}
 	
 	

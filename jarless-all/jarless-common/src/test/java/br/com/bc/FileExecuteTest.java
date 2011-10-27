@@ -53,5 +53,26 @@ public class FileExecuteTest {
 	}
 	
 	
+	@Test 
+	public void executarServicoJson() throws Exception {
+		
+		//dado o servico publicado
+		String service = "ListarContatos";
+		PUBLISH.publishJson();
+		
+		//quando executamos
+		String result = serviceEngine.executeService(service, "");
+		
+		//entao deve retornar um endereco valido
+		assertEquals("[\"Roger Waters\"," +
+					  "\"Nick Mason\"," +
+					  "\"Richard Wright\"," +
+					  "\"David Gilmour\"," +
+					  "\"Joey Ramone\"," +
+					  "\"Johnny Ramone\"," +
+					  "\"Dee Dee Ramone\"]", result);
+
+	}	
+	
 	
 }
