@@ -23,6 +23,11 @@ public class PublishMojo extends AbstractMojo {
 	 */
 	private String file;
 	
+	/**
+	 * @parameter expression="${response}"
+	 */
+	private String response;
+	
 	private String service;
 	
 	private String server = "http://localhost:8080";
@@ -41,13 +46,19 @@ public class PublishMojo extends AbstractMojo {
 		display("  file    : " + file);
 		display("  service : " + service);
 		
+		if (response != null) {
+			display("  response: " + response);
+		} else {
+			response = "";
+		}
+		
 		try {
 			
 			JsonConverter jsonConverter = new JsonConverter();
 			jsonConverter.setBinFolder("target/classes/");
 			jsonConverter.setBinExtension(".class");
 			
-			String content = jsonConverter.geraJson(file, "", "");
+			String content = jsonConverter.geraJson(file, "", response);
 			display("  json ok");
 			
 			//connecting to server
