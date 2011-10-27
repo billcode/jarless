@@ -57,7 +57,6 @@ public class ServiceEngine {
 	
 	public String executeService(String name, String request) {
 		String result = null;
-		Action action = null;
 		
 		System.out.println("executando servico " + name);
 		
@@ -67,30 +66,19 @@ public class ServiceEngine {
 		ServiceContext ctx = new ServiceContext(repository);
 
 		// carrega a classe e cria uma nova instancia
-		Object obj = null;
-		try {
-			obj = ctx.getClassLoader().loadClass(actionName).newInstance();
+		Object obj = loadClass(actionName, ctx);
 
-		} catch (InstantiationException iEx) {
-			throw new JarlessException("Class Error 1: " + actionName, iEx);
-
-		} catch (IllegalAccessException iaEx) {
-			throw new JarlessException("Class Error 2: " + actionName, iaEx);
-
-		} catch (ClassNotFoundException cnfEx) {
-			throw new JarlessException("Class Error 3: " + actionName, cnfEx);
-
-		} catch (NoClassDefFoundError ncdfErr) {
-			throw new JarlessException("Class Error 4: " + actionName, ncdfErr);
-			
-		} catch (Exception ncdfErr) {
-			throw new JarlessException("Class Error 5: " + actionName, ncdfErr);
-		}
-
-		action = (Action) obj;
+		Execution execution = (Execution) obj;
 		
-		Object response = action.execute(request);
+		Object response = execution.execute(request);
 		
+		result = prepareResponse(pd, response);
+		
+		return result;
+	}
+
+	private String prepareResponse(ServiceDefinition pd, Object response) {
+		String result;
 		if (pd.getResponse() != null && pd.getResponse().equals("json")) {
 			
 			//JSONArray jsonArray = JSONArray.fromObject( response );
@@ -107,7 +95,31 @@ public class ServiceEngine {
 		} else {
 			result = String.valueOf( response );
 		}
+		return result;
+	}
+
+	private Object loadClass(String actionName, ServiceContext ctx) {
+		Object result = null;
 		
+		try {
+			
+			result = ctx.getClassLoader().loadClass(actionName).newInstance();
+
+		} catch (InstantiationException iEx) {
+			throw new JarlessException("Class Error 1: " + actionName, iEx);
+
+		} catch (IllegalAccessException iaEx) {
+			throw new JarlessException("Class Error 2: " + actionName, iaEx);
+
+		} catch (ClassNotFoundException cnfEx) {
+			throw new JarlessException("Class Error 3: " + actionName, cnfEx);
+
+		} catch (NoClassDefFoundError ncdfErr) {
+			throw new JarlessException("Class Error 4: " + actionName, ncdfErr);
+			
+		} catch (Exception ncdfErr) {
+			throw new JarlessException("Class Error 5: " + actionName, ncdfErr);
+		}
 		return result;
 	}
 	

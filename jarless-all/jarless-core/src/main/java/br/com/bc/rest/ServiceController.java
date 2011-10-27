@@ -32,15 +32,7 @@ public class ServiceController {
 	public Response execute(@PathParam("param") String serviceName,
 								 @PathParam("request") String serviceRequest) {
 		
-		String result = "";
-		
-		try {
-			
-			result = ServiceEngine.getInstance().executeService(serviceName, serviceRequest);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String result = ServiceEngine.getInstance().executeService(serviceName, serviceRequest);
 
 		return Response.status(200).entity(result).build();
 
