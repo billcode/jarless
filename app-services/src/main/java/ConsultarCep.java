@@ -1,8 +1,8 @@
 
 
-import br.com.bc.rest.Action;
+import br.com.bc.rest.Execution;
 
-public class ConsultarCep implements Action {
+public class ConsultarCep implements Execution {
 
 	@Override
 	public Object execute(Object request) {
