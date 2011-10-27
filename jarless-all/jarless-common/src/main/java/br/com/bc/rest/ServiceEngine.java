@@ -13,6 +13,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import br.com.bc.jarless.Execution;
 import br.com.bc.jarless.exception.JarlessException;
 import br.com.bc.jarless.repository.Repository;
 import br.com.bc.rest.model.ClassDefinition;

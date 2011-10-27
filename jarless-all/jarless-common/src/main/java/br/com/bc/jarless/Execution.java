@@ -1,4 +1,4 @@
-package br.com.bc.rest;
+package br.com.bc.jarless;
 
 public interface Execution {
 

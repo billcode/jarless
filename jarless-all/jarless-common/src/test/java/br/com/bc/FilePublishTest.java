@@ -10,11 +10,13 @@ import br.com.bc.rest.ServiceEngine;
 public class FilePublishTest {
 	
 	private ServiceEngine serviceEngine = null;
+	
+	public static RepositoryMock REPOSITORY_MOCK = new RepositoryMock();
 
 	@Before public void init() {
 		serviceEngine = ServiceEngine.getInstance();
 		if (serviceEngine.getRepository() == null) {
-			serviceEngine.setRepository(new RepositoryMock());
+			serviceEngine.setRepository(REPOSITORY_MOCK);
 		}
 	}
 	

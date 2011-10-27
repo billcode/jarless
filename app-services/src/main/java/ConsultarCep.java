@@ -1,6 +1,6 @@
 
 
-import br.com.bc.rest.Execution;
+import br.com.bc.jarless.Execution;
 
 public class ConsultarCep implements Execution {
 
