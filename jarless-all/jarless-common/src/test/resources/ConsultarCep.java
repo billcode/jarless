@@ -1,15 +1,8 @@
 package br.com.bc.service;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import br.com.bc.jarless.Execution;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-
-import br.com.bc.rest.Action;
-
-public class ConsultarCep implements Action {
+public class ConsultarCep implements Execution {
 
 	@Override
 	public Object execute(Object request) {
