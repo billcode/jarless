@@ -48,6 +48,17 @@ public class ClassDefinition implements Serializable {
 	
 	@Override
 	public String toString() {
-		return this.name;
+		StringBuilder sb = new StringBuilder();
+		sb.append(name).append(":[");
+		int index=0;
+		while (index < data.length) {
+			sb.append(data[index]);
+			index++;
+			if (index < data.length) {
+				sb.append(",");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 }
