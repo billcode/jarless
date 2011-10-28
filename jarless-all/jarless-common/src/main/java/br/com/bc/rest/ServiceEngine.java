@@ -79,25 +79,30 @@ public class ServiceEngine {
 	}
 
 	private String prepareResponse(ServiceDefinition pd, Object response) {
-		String result;
-		if (pd.getResponse() != null && pd.getResponse().equals("json")) {
-			
-			//JSONArray jsonArray = JSONArray.fromObject( response );
-			//result = jsonArray.toString();
-			
-			StringWriter out = new StringWriter();
-			try {
-				JSONValue.writeJSONString(response, out);
-			} catch (IOException e) {
-				throw new JarlessException("Error generating response", e);
-			}
-			result = out.toString();
-			
+		boolean jsonresponse = (pd.getResponse() != null && pd.getResponse().equals("json"));
+		
+		if  (jsonresponse) {
+			return prepareResponseJson(response);
 		} else {
-			result = String.valueOf( response );
+			return prepareResponseString(response);
 		}
-		return result;
 	}
+	
+	
+	private String prepareResponseString(Object response) {
+		return String.valueOf( response );
+	}
+	
+	private String prepareResponseJson(Object response) {
+		StringWriter out = new StringWriter();
+		try {
+			JSONValue.writeJSONString(response, out);
+		} catch (IOException e) {
+			throw new JarlessException("Error generating response", e);
+		}
+		return out.toString();
+	}
+	
 
 	private Object loadClass(String actionName, ServiceContext ctx) {
 		Object result = null;
