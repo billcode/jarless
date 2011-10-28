@@ -19,6 +19,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import br.com.bc.jarless.exception.JarlessException;
 import br.com.bc.rest.model.ClassDefinition;
 import br.com.bc.rest.model.ServiceDefinition;
 
@@ -27,7 +28,32 @@ public class JsonConverter {
 	private String binfolder = null;
 	
 	private String binExtension = null;
+	
+	JSONParser parser = new JSONParser();
+	ContainerFactory containerFactory = null;
+	
+	public JsonConverter() {
+		containerFactory = new ContainerFactory() {
+			public List creatArrayContainer() {
+				return new LinkedList();
+			}
 
+			public Map createObjectContainer() {
+				return new LinkedHashMap();
+			}
+
+		};	
+	}
+	
+	public void setBinFolder(String binfolder) {
+		this.binfolder = binfolder; 
+	}
+
+	public void setBinExtension(String binExtension) {
+		this.binExtension = binExtension;
+	}	
+	
+	
 	public String geraJson(String classname, String request, String response) {
 		String json = null;
 		
@@ -97,31 +123,13 @@ public class JsonConverter {
 		return classData;
 	}		
 	
-	public void setBinFolder(String binfolder) {
-		this.binfolder = binfolder; 
-	}
 
-	public void setBinExtension(String binExtension) {
-		this.binExtension = binExtension;
-	}
 	
 	
 	
 	public ServiceDefinition getServiceDefinitionFrom(String jsonText) {
 
 		ServiceDefinition pd = new ServiceDefinition();
-
-		JSONParser parser = new JSONParser();
-		ContainerFactory containerFactory = new ContainerFactory() {
-			public List creatArrayContainer() {
-				return new LinkedList();
-			}
-
-			public Map createObjectContainer() {
-				return new LinkedHashMap();
-			}
-
-		};
 
 		try {
 
@@ -133,15 +141,14 @@ public class JsonConverter {
 
 				if (entry.getKey().equals("name")) {
 					pd.setName(entry.getValue().toString());
+					
 				} else if (entry.getKey().equals("request")) {
 					pd.setRequest(entry.getValue().toString());
+					
 				} else if (entry.getKey().equals("response")) {
-					pd.setResponse(entry.getValue().toString());					
+					pd.setResponse(entry.getValue().toString());
+					
 				} else if (entry.getKey().equals("main_class")) {
-					
-					//LinkedList list = (LinkedList) entry.getValue();
-					//List<ClassDefinition> classes = getClassesDefinitionFrom(list);
-					
 					LinkedHashMap<String, Object> entryChild = (LinkedHashMap) entry.getValue();
 
 					ClassDefinition mainClass = new ClassDefinition();
@@ -157,15 +164,12 @@ public class JsonConverter {
 						newdata[i] = Byte.parseByte(newvalue);
 					}
 					mainClass.setData(newdata);
-					
 					pd.setMainClass(mainClass);
-
 				}
-
 			}
 
 		} catch (ParseException pe) {
-			System.out.println(pe);
+			throw new JarlessException("Error parsing json. ", pe);
 		}
 		
 		return pd;
