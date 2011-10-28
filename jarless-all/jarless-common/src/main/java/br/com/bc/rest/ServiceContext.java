@@ -13,7 +13,7 @@ public class ServiceContext {
 	}
 	
 	
-	public ServiceClassLoader getClassLoader() throws Exception {
+	public ServiceClassLoader getClassLoader() {
 
 		if (classLoader == null) {
 			classLoader = new ServiceClassLoader(getClass().getClassLoader(), repository);

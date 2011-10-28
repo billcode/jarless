@@ -6,10 +6,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import br.com.bc.rest.model.ClassDefinition;
+import br.com.bc.rest.model.ServiceDefinition;
 
 public class JsonConverter {
 	
@@ -93,4 +104,70 @@ public class JsonConverter {
 	public void setBinExtension(String binExtension) {
 		this.binExtension = binExtension;
 	}
+	
+	
+	
+	public ServiceDefinition getServiceDefinitionFrom(String jsonText) {
+
+		ServiceDefinition pd = new ServiceDefinition();
+
+		JSONParser parser = new JSONParser();
+		ContainerFactory containerFactory = new ContainerFactory() {
+			public List creatArrayContainer() {
+				return new LinkedList();
+			}
+
+			public Map createObjectContainer() {
+				return new LinkedHashMap();
+			}
+
+		};
+
+		try {
+
+			Map json = (Map) parser.parse(jsonText, containerFactory);
+			Iterator iter = json.entrySet().iterator();
+
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+
+				if (entry.getKey().equals("name")) {
+					pd.setName(entry.getValue().toString());
+				} else if (entry.getKey().equals("request")) {
+					pd.setRequest(entry.getValue().toString());
+				} else if (entry.getKey().equals("response")) {
+					pd.setResponse(entry.getValue().toString());					
+				} else if (entry.getKey().equals("main_class")) {
+					
+					//LinkedList list = (LinkedList) entry.getValue();
+					//List<ClassDefinition> classes = getClassesDefinitionFrom(list);
+					
+					LinkedHashMap<String, Object> entryChild = (LinkedHashMap) entry.getValue();
+
+					ClassDefinition mainClass = new ClassDefinition();
+					mainClass.setName(entryChild.get("name").toString());
+					
+					LinkedList<Byte> datalist = (LinkedList<Byte>) entryChild.get("data");
+					
+					byte[] newdata = new byte[datalist.size()];
+					int index = 0;
+					
+					for(int i=0; i < datalist.size(); i++) {
+						String newvalue = String.valueOf(datalist.get(i)); 
+						newdata[i] = Byte.parseByte(newvalue);
+					}
+					mainClass.setData(newdata);
+					
+					pd.setMainClass(mainClass);
+
+				}
+
+			}
+
+		} catch (ParseException pe) {
+			System.out.println(pe);
+		}
+		
+		return pd;
+	}	
 }
