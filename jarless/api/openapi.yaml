@@ -1,0 +1,44 @@
+openapi: 3.0.2
+
+info:
+  version: 0.0.1
+  title: Jarless API
+
+servers:
+  - url: http://localhost:5000
+    description: Local
+
+paths:
+
+  /version:
+    get:
+      operationId: jarless.api.api_version
+      summary: Retorna a versão da API
+      responses:
+        200:
+          description: Success
+
+  /executions/{package}:
+    parameters:
+      - name: package
+        in: path
+        description: Package
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: jarless.api.executions.create_execution
+      summary: Create a new execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inputs:
+                  additionalProperties: true
+                  nullable: true
+      responses:
+        201:
+          description: Created

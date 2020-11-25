@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  jarless:
+    image: jarless
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      FLASK_APP: jarless.app
+      DATABASE_URI: postgresql://jarless:jarless@postgres/jarless
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:12.5-alpine
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./devops/docker/entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: jarless
+      POSTGRES_PASSWORD: jarless
+      POSTGRES_DB: jarless
+
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: jarless@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: jarless
+  #   ports:
+  #     - "16543:80"
+  #   depends_on:
+  #     - postgres
