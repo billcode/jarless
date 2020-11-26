@@ -3,11 +3,15 @@ from jarless.models.executions import Package
 from jarless.exceptions import NotFoundException
 
 
-def get_package(package_name: str) -> dict:
+def get_package(package_name: str = None, package_id: int = None) -> dict:
 
     try:
 
-        package = Package.query.filter(Package.name == package_name).one()
+        qs = Package.query.filter(Package.name == package_name)
+        if package_id:
+            qs = Package.query.filter(Package.id == package_id)
+
+        package = qs.one()
 
         return {
             "id": package.id,
