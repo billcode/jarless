@@ -1,3 +1,4 @@
+import uuid
 from multiprocessing import Process
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -36,6 +37,7 @@ def _add_execution_task(execution_id, package_id, inputs):
         execution_id=execution_id,
         package_id=package_id,
         inputs=inputs,
+        secrets=uuid.uuid4().hex,
     )
     db.session.add(task)
     db.session.commit()
@@ -91,6 +93,26 @@ def _get_task(task_id):
 
     except NoResultFound:
         raise TaskNotFound(task_id)
+
+
+def add_output_value(package_name: str, task_id: str, secrets: str, name: str, value: str):
+    package = packages.get_package(package_name=package_name)
+    task = _get_task(task_id)
+
+    if task.secrets != secrets:
+        raise RuntimeError("Not authorized secrets for add task output")
+
+    if not package["definition"].get("outputs", {}).get(name):
+        raise RuntimeError(f"Invalid output '{name}'")
+
+    # TODO: add select for update instead
+    if not task.outputs:
+        task.outputs = {}
+
+    task.outputs[name] = value
+
+    db.session.add(task)
+    db.session.commit()
 
 
 class ExecutionNotFound(NotFoundException):

@@ -42,3 +42,48 @@ paths:
       responses:
         201:
           description: Created
+
+  /executions/{package}/{task_id}/add/output:
+    parameters:
+      - name: package
+        in: path
+        description: Package
+        required: true
+        schema:
+          type: string
+      - name: task_id
+        in: path
+        description: Task ID
+        required: true
+        schema:
+          type: string
+      - name: secret
+        in: query
+        description: Permission
+        schema:
+          type: string
+
+    post:
+      operationId: jarless.api.executions.add_output
+      summary: Add an output for a given task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: output1
+                value:
+                  type: string
+                  example: value1
+                  nullable: true
+                filedata:
+                  type: string
+                  format: binary
+                  nullable: true
+      responses:
+        201:
+          description: Added

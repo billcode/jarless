@@ -58,6 +58,7 @@ class Task(db.Model):
     inputs = sa.Column(JSONB, nullable=True, default={})
     outputs = sa.Column(JSONB(none_as_null=True), nullable=True)
     error = sa.Column(sa.Text, nullable=True)
+    secrets = sa.Column(sa.String(128), server_default=None, nullable=True)
 
     created_at = sa.Column(sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     started_at = sa.Column(sa.DateTime(timezone=True), nullable=True)
