@@ -1,6 +1,6 @@
 from flask import Flask
 import connexion
-from jarless.exceptions import NotFoundException
+from jarless.exceptions import NotFoundException, InvalidValueException
 
 
 def create_api_app(version="api"):
@@ -11,6 +11,18 @@ def create_api_app(version="api"):
 
     @app.errorhandler(NotFoundException)
     def not_found_handler(error):
-        return "Not found: {}".format(str(error)), 404
+        return {
+            "detail": str(error),
+            "status": 404,
+            "title": "Not Found",
+        }
+
+    @app.errorhandler(InvalidValueException)
+    def invalid_value_handler(error):
+        return {
+            "detail": str(error),
+            "status": 400,
+            "title": "Bad Request",
+        }
 
     return app

@@ -17,15 +17,8 @@ def create_execution(package):
     )
 
 
-def add_output(package, task_id, secret):
+def add_output(package, task_id, secrets):
     inputs = request.get_json()
-    new_output = executions.add_output_value(package, task_id, secret, inputs.get("name"), inputs.get("value"))
+    task = executions.add_output_value(package, task_id, secrets, inputs.get("name"), inputs.get("value"))
     # TODO: add output files
-    return (
-        jsonify(
-            {
-                "output": new_output,
-            }
-        ),
-        201,
-    )
+    return (jsonify(task), 201)

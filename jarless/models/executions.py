@@ -18,7 +18,9 @@ class Package(db.Model):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String(128), nullable=False, unique=True)
     definition = sa.Column(JSONB, nullable=False, default={})
-    created_at = sa.Column(sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = sa.Column(
+        sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
 
 class Execution(db.Model):
@@ -33,7 +35,9 @@ class Execution(db.Model):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     status = sa.Column(sa.String(32), server_default="QUEUED", nullable=False)
     description = sa.Column(sa.String(256), server_default=None, nullable=True)
-    created_at = sa.Column(sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = sa.Column(
+        sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     started_at = sa.Column(sa.DateTime(timezone=True), nullable=True)
     finished_at = sa.Column(sa.DateTime(timezone=True), nullable=True)
 
@@ -60,9 +64,24 @@ class Task(db.Model):
     error = sa.Column(sa.Text, nullable=True)
     secrets = sa.Column(sa.String(128), server_default=None, nullable=True)
 
-    created_at = sa.Column(sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = sa.Column(
+        sa.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
     started_at = sa.Column(sa.DateTime(timezone=True), nullable=True)
     finished_at = sa.Column(sa.DateTime(timezone=True), nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "execution_id": self.execution_id,
+            "package_id": self.package_id,
+            "inputs": self.inputs,
+            "outputs": self.outputs,
+            "error": self.error,
+            "created_at": self.created_at,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
+        }
 
 
 class Log(db.Model):

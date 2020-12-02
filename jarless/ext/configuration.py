@@ -29,6 +29,7 @@ class ProductionConfig(object):
     TESTING = False
 
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "Ch@nG3_th1s_IN_PR0D!")
+    JARLESS_DSN = "http://192.168.15.18:5000"
 
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://jarless:jarless@localhost/jarless")

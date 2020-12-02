@@ -12,11 +12,13 @@ def get_package(package_name: str = None, package_id: int = None) -> dict:
             qs = Package.query.filter(Package.id == package_id)
 
         package = qs.one()
+        definition = package.definition
+        definition["name"] = package.name
 
         return {
             "id": package.id,
             "name": package.name,
-            "definition": package.definition,
+            "definition": definition,
             "created_at": package.created_at,
         }
 

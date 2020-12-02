@@ -57,7 +57,7 @@ paths:
         required: true
         schema:
           type: string
-      - name: secret
+      - name: secrets
         in: query
         description: Permission
         schema:

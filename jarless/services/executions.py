@@ -1,9 +1,10 @@
 import uuid
+from datetime import datetime, timezone
 from multiprocessing import Process
 from sqlalchemy.orm.exc import NoResultFound
 
 from jarless.ext.database import db
-from jarless.exceptions import NotFoundException
+from jarless.exceptions import NotFoundException, InvalidValueException
 from jarless.services import packages, taskrunner
 from jarless.models.executions import Execution, Task
 
@@ -52,6 +53,7 @@ def _run_task_async(task):
         package["definition"],
         task.inputs,
         task.id,
+        task.secrets,
     )
     async_process = Process(
         target=taskrunner.run_task,
@@ -70,6 +72,11 @@ def update_status(task_id, status, error=None):
     execution.status = status
     if error:
         task.error = str(error)
+
+    if status == "STARTED":
+        task.started_at = datetime.now(timezone.utc)
+    elif status in ["SUCCESS", "FAILURE"]:
+        task.finished_at = datetime.now(timezone.utc)
 
     db.session.add(execution)
     db.session.add(task)
@@ -95,24 +102,34 @@ def _get_task(task_id):
         raise TaskNotFound(task_id)
 
 
-def add_output_value(package_name: str, task_id: str, secrets: str, name: str, value: str):
+def add_output_value(
+    package_name: str, task_id: str, secrets: str, name: str, value: str
+):
     package = packages.get_package(package_name=package_name)
     task = _get_task(task_id)
 
     if task.secrets != secrets:
         raise RuntimeError("Not authorized secrets for add task output")
 
-    if not package["definition"].get("outputs", {}).get(name):
-        raise RuntimeError(f"Invalid output '{name}'")
+    package_outputs = package["definition"].get("outputs", {})
+    if not package_outputs.get(name):
+        raise InvalidValueException(
+            f"Invalid output '{name}'. Package '{package['name']}' available outputs: {list(package_outputs.keys())}"
+        )
 
+    print("--> outputs BEFORE", task.outputs)
     # TODO: add select for update instead
-    if not task.outputs:
+    if task.outputs is None:
         task.outputs = {}
 
-    task.outputs[name] = value
+    outputs = task.outputs.copy()
+    outputs[name] = value
+    task.outputs = outputs
 
+    print("--> outputs AFTER", task.outputs)
     db.session.add(task)
     db.session.commit()
+    return task.to_dict()
 
 
 class ExecutionNotFound(NotFoundException):
