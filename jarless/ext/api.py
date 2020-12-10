@@ -1,5 +1,6 @@
 from flask import Flask
 import connexion
+from botocore.exceptions import NoCredentialsError
 from jarless.exceptions import NotFoundException, InvalidValueException
 
 
@@ -23,6 +24,14 @@ def create_api_app(version="api"):
             "detail": str(error),
             "status": 400,
             "title": "Bad Request",
+        }
+
+    @app.errorhandler(NoCredentialsError)
+    def invalid_value_handler(error):
+        return {
+            "detail": str(error),
+            "status": 401,
+            "title": "Unauthorized",
         }
 
     return app

@@ -5,6 +5,7 @@ from containerpy.runner import DockerRunner
 
 from jarless.services import logs, executions
 from jarless.ext.configuration import get_config_from_env
+from jarless.storage import aws_storage
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -13,18 +14,28 @@ runner = DockerRunner()
 config = get_config_from_env()
 
 
+def _prepare_inputs(inputs, inputs_def):
+    file_inputs = [item for item in inputs_def.keys() if inputs_def[item].get("type") == "file"]
+    for item in file_inputs:
+        if inputs.get(item):
+            inputs[item] = aws_storage.get_public_download_file_url(inputs[item])
+    return inputs
+
+
 def run_task(task_definition: dict, inputs: dict, task_id: int, secrets: str) -> bool:
     """"""
     name = task_definition["name"]
     save_output_url = f"{config.JARLESS_DSN}/api/executions/{name}/{task_id}/add/output"
 
-    task_definition["inputs"] = inputs
+    task_definition["inputs"] = _prepare_inputs(inputs, task_definition["inputs"])
     task_definition["environment"] = {
         "TASK_ID": task_id,
-        "SAVE_OUTPUT_URL": save_output_url,
+        "SAVE_OUTPUT_VALUE_URL": f"{save_output_url}/value",
+        "SAVE_OUTPUT_FILE_URL": f"{save_output_url}/file",
         "SECRETS": secrets,
     }
 
+    print("TASK DEF")
     print(task_definition)
 
     def save_output_to(message, task_id=task_id):

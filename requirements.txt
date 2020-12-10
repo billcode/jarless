@@ -10,6 +10,9 @@ Flask-Migrate==2.5.3
 psycopg2-binary==2.8.6
 Flask-Admin==1.5.7
 
+# Storage
+boto3>=1.16.0
+
 # Devops
 #gunicorn==20.0.4
 

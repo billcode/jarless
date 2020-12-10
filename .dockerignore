@@ -23,4 +23,5 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/postgres_data
+**/minio_files
 README.md

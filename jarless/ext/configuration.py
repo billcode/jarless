@@ -38,6 +38,10 @@ class ProductionConfig(object):
     # ext.admin
     FLASK_ADMIN_SWATCH = "flatly"
 
+    # STORAGE
+    STORAGE_DSN = os.getenv("STORAGE_DSN", "http://192.168.15.18:9000")
+    STORAGE_BUCKET = os.getenv("STORAGE_BUCKET", "jarless")
+
 
 class DevelopmentConfig(ProductionConfig):
     FLASK_ENV = "development"

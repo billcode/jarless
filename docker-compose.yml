@@ -28,6 +28,18 @@ services:
       POSTGRES_PASSWORD: jarless
       POSTGRES_DB: jarless
 
+  minio:
+    image: minio/minio:latest
+    ports:
+      - 9000:9000
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: JKIAIOSFODNN7J@RL33S
+      MINIO_SECRET_KEY: AJalrXUtnFEMI/K7MDENG/bPxRfiCY3X@RL3SSv2
+    volumes:
+      - ./minio_files:/data
+
+
   # pgadmin:
   #   image: dpage/pgadmin4:latest
   #   environment:

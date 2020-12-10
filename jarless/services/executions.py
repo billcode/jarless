@@ -7,6 +7,10 @@ from jarless.ext.database import db
 from jarless.exceptions import NotFoundException, InvalidValueException
 from jarless.services import packages, taskrunner
 from jarless.models.executions import Execution, Task
+from jarless.ext.configuration import get_config_from_env
+from jarless.storage import aws_storage
+
+config = get_config_from_env()
 
 
 def create_execution(package_name, inputs, description=None):
@@ -102,9 +106,7 @@ def _get_task(task_id):
         raise TaskNotFound(task_id)
 
 
-def add_output_value(
-    package_name: str, task_id: str, secrets: str, name: str, value: str
-):
+def _get_and_validated_package_and_task(package_name, task_id, secrets, output):
     package = packages.get_package(package_name=package_name)
     task = _get_task(task_id)
 
@@ -112,12 +114,17 @@ def add_output_value(
         raise RuntimeError("Not authorized secrets for add task output")
 
     package_outputs = package["definition"].get("outputs", {})
-    if not package_outputs.get(name):
+    if not package_outputs.get(output):
         raise InvalidValueException(
-            f"Invalid output '{name}'. Package '{package['name']}' available outputs: {list(package_outputs.keys())}"
+            f"Invalid output '{output}'. Package '{package['name']}' available outputs: {list(package_outputs.keys())}"
         )
+    return (package, task)
 
-    print("--> outputs BEFORE", task.outputs)
+
+def add_output_value(package_name: str, task_id: str, secrets: str, name: str, value: str):
+
+    _, task = _get_and_validated_package_and_task(package_name, task_id, secrets, name)
+
     # TODO: add select for update instead
     if task.outputs is None:
         task.outputs = {}
@@ -126,7 +133,25 @@ def add_output_value(
     outputs[name] = value
     task.outputs = outputs
 
-    print("--> outputs AFTER", task.outputs)
+    db.session.add(task)
+    db.session.commit()
+    return task.to_dict()
+
+
+def add_output_file(package_name: str, task_id: str, secrets: str, name: str, filename: str, fileobj):
+    _, task = _get_and_validated_package_and_task(package_name, task_id, secrets, name)
+
+    # TODO: add select for update instead
+    if task.outputs is None:
+        task.outputs = {}
+
+    target_file = f"s3://{config.STORAGE_BUCKET}/{task.execution_id}/{task_id}/outputs/{filename}"
+    aws_storage.upload_fileobj(fileobj, target_file)
+
+    outputs = task.outputs.copy()
+    outputs[name] = target_file
+    task.outputs = outputs
+
     db.session.add(task)
     db.session.commit()
     return task.to_dict()

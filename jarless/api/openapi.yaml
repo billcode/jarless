@@ -43,7 +43,7 @@ paths:
         201:
           description: Created
 
-  /executions/{package}/{task_id}/add/output:
+  /executions/{package}/{task_id}/add/output/value:
     parameters:
       - name: package
         in: path
@@ -64,7 +64,7 @@ paths:
           type: string
 
     post:
-      operationId: jarless.api.executions.add_output
+      operationId: jarless.api.executions.add_output_value
       summary: Add an output for a given task
       requestBody:
         required: true
@@ -75,15 +75,81 @@ paths:
               properties:
                 name:
                   type: string
-                  example: output1
+                  example: myoutput
                 value:
-                  type: string
-                  example: value1
-                  nullable: true
-                filedata:
-                  type: string
-                  format: binary
-                  nullable: true
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: array
+                    - type: object
+                      example: 100
       responses:
         201:
           description: Added
+
+  /executions/{package}/{task_id}/add/output/file:
+    parameters:
+      - name: package
+        in: path
+        description: Package
+        required: true
+        schema:
+          type: string
+      - name: task_id
+        in: path
+        description: Task ID
+        required: true
+        schema:
+          type: string
+      - name: secrets
+        in: query
+        description: Permission
+        schema:
+          type: string
+
+    post:
+      operationId: jarless.api.executions.add_output_file
+      summary: Add an output for a given task
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: output1
+                filedata:
+                  type: string
+                  format: binary
+
+      responses:
+        201:
+          description: Added
+
+  # /upload/{package}:
+  #   parameters:
+  #     - name: package
+  #       in: path
+  #       description: Package
+  #       required: true
+  #       schema:
+  #         type: string
+
+  #   post:
+  #     operationId: jarless.api.executions.add_output_file
+  #     summary: Add an output for a given task
+  #     requestBody:
+  #       content:
+  #         multipart/form-data:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               filedata:
+  #                 type: string
+  #                 format: binary
+
+  #     responses:
+  #       201:
+  #         description: Added
