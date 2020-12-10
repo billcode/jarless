@@ -97,6 +97,21 @@ def _get_execution(execution_id):
         raise ExecutionNotFound(execution_id)
 
 
+def get_execution(execution_id):
+    execution = _get_execution(execution_id)
+    task = Task.query.filter(Task.execution_id == execution_id).one()
+
+    return {
+        "id": execution.id,
+        "status": execution.status,
+        "description": execution.description,
+        "created_at": execution.created_at,
+        "started_at": execution.started_at,
+        "finished_at": execution.finished_at,
+        "task": task.to_dict(),
+    }
+
+
 def _get_task(task_id):
     try:
 

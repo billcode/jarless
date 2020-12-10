@@ -36,3 +36,7 @@ def add_output_file(package, task_id, secrets):
 
     # aws_storage.upload_fileobj(uploaded_file.stream, "s3://jarless/uploads/{}".format(uploaded_file.filename))
     return (jsonify(task), 201)
+
+
+def get_execution(id):
+    return (jsonify(executions.get_execution(id)), 200)

@@ -128,6 +128,26 @@ paths:
         201:
           description: Added
 
+
+  /executions/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+    get:
+      operationId: jarless.api.executions.get_execution
+      summary: Get execution
+      responses:
+        200:
+          description: Get an execution
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Execution"
+
   # /upload/{package}:
   #   parameters:
   #     - name: package
@@ -153,3 +173,37 @@ paths:
   #     responses:
   #       201:
   #         description: Added
+
+components:
+
+  schemas:
+
+    Execution:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          example: 1
+        status:
+          type: string
+          example: PENDING
+        description:
+          type: string
+          example: Jan execution
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        started_at:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+          nullable: true
+        finished_at:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+          nullable: true
