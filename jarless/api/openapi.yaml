@@ -9,7 +9,6 @@ servers:
     description: Local
 
 paths:
-
   /version:
     get:
       operationId: jarless.api.api_version
@@ -128,7 +127,6 @@ paths:
         201:
           description: Added
 
-
   /executions/{id}:
     parameters:
       - name: id
@@ -147,6 +145,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Execution"
+
+  /packages:
+    parameters:
+      - name: overwrite
+        in: query
+        description: overwrite existing package
+        schema:
+          type: boolean
+          default: false
+          nullable: true
+    post:
+      summary: creates a new package
+      operationId: jarless.api.packages.create_package
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tardata:
+                  type: string
+                  format: binary
+                yamldata:
+                  type: string
+                  format: binary
+
+      responses:
+        201:
+          description: Added
+        400:
+          description: Bad request
+        409:
+          description: Conflict
 
   # /upload/{package}:
   #   parameters:
@@ -175,9 +206,7 @@ paths:
   #         description: Added
 
 components:
-
   schemas:
-
     Execution:
       type: object
       required:
@@ -196,14 +225,14 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: "2017-07-21T17:32:28Z"
         started_at:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: "2017-07-21T17:32:28Z"
           nullable: true
         finished_at:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: "2017-07-21T17:32:28Z"
           nullable: true

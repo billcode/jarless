@@ -5,9 +5,15 @@ from jarless.exceptions import NotFoundException, InvalidValueException
 
 
 def create_api_app(version="api"):
-    app = Flask(__name__)
     connexion_app = connexion.FlaskApp(__name__, specification_dir="../api/")
-    connexion_app.add_api("openapi.yaml", validate_responses=True, base_path="/api")
+    connexion_app.add_api(
+        "openapi.yaml",
+        validate_responses=True,
+        base_path="/api",
+        options={
+            "swagger_url": "api",
+        },
+    )
     app = connexion_app.app
 
     @app.errorhandler(NotFoundException)
