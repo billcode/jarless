@@ -52,9 +52,31 @@ def create_or_update_package(name, package_def, filename, tar_file, overwrite=Fa
     return package.to_dict()
 
 
+def get_package_image_url(package_name):
+    try:
+
+        package = Package.query.filter(Package.name == package_name).one()
+
+        image_path = package.definition.get("image_path")
+        if not image_path:
+            raise PackageImageNotFound(package_name)
+
+        return {
+            "url": aws_storage.get_public_download_file_url(image_path),
+        }
+
+    except NoResultFound:
+        raise PackageNotFound(package_name)
+
+
 class PackageNotFound(NotFoundException):
     def __init__(self, package_name):
         super().__init__(f"Package '{package_name}' not found")
+
+
+class PackageImageNotFound(NotFoundException):
+    def __init__(self, package_name):
+        super().__init__(f"Image not found for Package '{package_name}'")
 
 
 class PackageConflict(ConflictException):

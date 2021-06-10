@@ -25,3 +25,11 @@ def create_package(overwrite=False):
         overwrite=overwrite,
     )
     return (jsonify(package), 201)
+
+
+def download_package_image(package_name):
+    download_url = packages.get_package_image_url(package_name)
+    return (
+        jsonify(download_url),
+        200,
+    )

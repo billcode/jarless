@@ -179,31 +179,33 @@ paths:
         409:
           description: Conflict
 
-  # /upload/{package}:
-  #   parameters:
-  #     - name: package
-  #       in: path
-  #       description: Package
-  #       required: true
-  #       schema:
-  #         type: string
+  /packages/{package_name}/images/download:
+    parameters:
+      - name: package_name
+        in: path
+        description: package name
+        required: true
+        schema:
+          type: string
+    get:
+      summary: get the package image
+      operationId: jarless.api.packages.download_package_image
 
-  #   post:
-  #     operationId: jarless.api.executions.add_output_file
-  #     summary: Add an output for a given task
-  #     requestBody:
-  #       content:
-  #         multipart/form-data:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               filedata:
-  #                 type: string
-  #                 format: binary
-
-  #     responses:
-  #       201:
-  #         description: Added
+      responses:
+        200:
+          description: Get a saved image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: https://example.com/myfile.tar
+        400:
+          description: Bad request
+        404:
+          description: Package or Image not found
 
 components:
   schemas:
