@@ -51,6 +51,7 @@ def _add_execution_task(execution_id, package_id, inputs):
 
 def _run_task_async(task):
 
+    # TODO: It needs to get the package again
     package = packages.get_package(package_id=task.package_id)
 
     params = (
@@ -121,31 +122,34 @@ def _get_task(task_id):
         raise TaskNotFound(task_id)
 
 
-def _get_and_validated_package_and_task(package_name, task_id, secrets, output):
+def _get_and_validated_package_and_task(package_name, task_id, secrets):
     package = packages.get_package(package_name=package_name)
     task = _get_task(task_id)
 
     if task.secrets != secrets:
         raise RuntimeError("Not authorized secrets for add task output")
 
-    package_outputs = package["definition"].get("outputs", {})
-    if not package_outputs.get(output):
-        raise InvalidValueException(
-            f"Invalid output '{output}'. Package '{package['name']}' available outputs: {list(package_outputs.keys())}"
-        )
     return (package, task)
 
 
-def add_output_value(package_name: str, task_id: str, secrets: str, name: str, value: str):
-
-    _, task = _get_and_validated_package_and_task(package_name, task_id, secrets, name)
+def add_output_value(package_name: str, task_id: str, secrets: str, values: dict):
+    _, task = _get_and_validated_package_and_task(package_name, task_id, secrets)
 
     # TODO: add select for update instead
     if task.outputs is None:
         task.outputs = {}
 
     outputs = task.outputs.copy()
-    outputs[name] = value
+    # TODO: validate when the output is not inside the definition
+    # package_outputs = package["definition"].get("outputs", {})
+    # if not package_outputs.get(output):
+    #    raise InvalidValueException(
+    #        f"Invalid output '{output}'. Package '{package['name']}' available outputs: {list(package_outputs.keys())}"
+    #    )
+
+    for key in values.keys():
+        outputs[key] = values[key]
+
     task.outputs = outputs
 
     db.session.add(task)
@@ -153,14 +157,18 @@ def add_output_value(package_name: str, task_id: str, secrets: str, name: str, v
     return task.to_dict()
 
 
-def add_output_file(package_name: str, task_id: str, secrets: str, name: str, filename: str, fileobj):
+def add_output_file(
+    package_name: str, task_id: str, secrets: str, name: str, filename: str, fileobj
+):
     _, task = _get_and_validated_package_and_task(package_name, task_id, secrets, name)
 
     # TODO: add select for update instead
     if task.outputs is None:
         task.outputs = {}
 
-    target_file = f"s3://{config.STORAGE_BUCKET}/{task.execution_id}/{task_id}/outputs/{filename}"
+    target_file = (
+        f"s3://{config.STORAGE_BUCKET}/{task.execution_id}/{task_id}/outputs/{filename}"
+    )
     aws_storage.upload_fileobj(fileobj, target_file)
 
     outputs = task.outputs.copy()

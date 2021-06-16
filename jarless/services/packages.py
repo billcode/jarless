@@ -45,6 +45,9 @@ def create_or_update_package(name, package_def, filename, tar_file, overwrite=Fa
 
     target_file = f"s3://{config.STORAGE_BUCKET}/packages/{name}/{filename}"
     aws_storage.upload_fileobj(tar_file, target_file)
+
+    name, version = package_def["name"], package_def.get("version", "latest")
+    package_def["image"] = f"{name}:{version}"
     package_def["image_path"] = target_file
 
     db.session.add(package)

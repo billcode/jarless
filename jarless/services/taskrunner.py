@@ -15,11 +15,17 @@ config = get_config_from_env()
 
 
 def _prepare_inputs(inputs, inputs_def):
-    file_inputs = [item for item in inputs_def.keys() if inputs_def[item].get("type") == "file"]
+    file_inputs = [
+        item for item in inputs_def.keys() if inputs_def[item].get("type") == "file"
+    ]
     for item in file_inputs:
         if inputs.get(item):
             inputs[item] = aws_storage.get_public_download_file_url(inputs[item])
     return inputs
+
+
+def _prepare_image_file(image_path):
+    return aws_storage.get_public_download_file_url(image_path)
 
 
 def run_task(task_definition: dict, inputs: dict, task_id: int, secrets: str) -> bool:
@@ -28,10 +34,16 @@ def run_task(task_definition: dict, inputs: dict, task_id: int, secrets: str) ->
     save_output_url = f"{config.JARLESS_DSN}/api/executions/{name}/{task_id}/add/output"
 
     task_definition["inputs"] = _prepare_inputs(inputs, task_definition["inputs"])
+    if task_definition.get("image_path"):
+        task_definition["inputs"]["_image_path"] = _prepare_image_file(
+            task_definition.get("image_path")
+        )
+
     task_definition["environment"] = {
         "TASK_ID": task_id,
-        "SAVE_OUTPUT_VALUE_URL": f"{save_output_url}/value",
-        "SAVE_OUTPUT_FILE_URL": f"{save_output_url}/file",
+        "PACKAGE": name,
+        "SAVE_OUTPUT_VALUES_URL": f"{save_output_url}/values?secrets={secrets}",
+        "SAVE_OUTPUT_FILE_URL": f"{save_output_url}/file?secrets={secrets}",
         "SECRETS": secrets,
     }
 
@@ -49,7 +61,9 @@ def run_task(task_definition: dict, inputs: dict, task_id: int, secrets: str) ->
 
     try:
         executions.update_status(task_id, "STARTED")
-        runner.run_task(task_definition, stdout_to=save_output_to, stderr_to=save_output_to)
+        runner.run_task(
+            task_definition, stdout_to=save_output_to, stderr_to=save_output_to
+        )
         executions.update_status(task_id, "SUCCESS")
     except Exception as error:
         executions.update_status(task_id, "FAILURE", error)

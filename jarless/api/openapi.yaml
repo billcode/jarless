@@ -42,7 +42,7 @@ paths:
         201:
           description: Created
 
-  /executions/{package}/{task_id}/add/output/value:
+  /executions/{package}/{task_id}/add/output/values:
     parameters:
       - name: package
         in: path
